@@ -7,6 +7,8 @@ musicVolume = 1
 sound = {}
 soundVolume = 1
 
+--ЧЕЧЕ
+
 function playMusic(name)
 	local current = music[name]
 	if current then
