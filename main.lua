@@ -8,6 +8,7 @@ sound = {}
 soundVolume = 1
 
 --ЧЕЧЕ
+--ВТОРОЕ ЧЕЧЕ
 
 function playMusic(name)
 	local current = music[name]
