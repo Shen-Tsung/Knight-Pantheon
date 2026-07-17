@@ -7,8 +7,8 @@
 Это первый проект, над которым я взялся всерьёз и который выглядит играбельно. Игра находится на самом дне разработки, где я пока ещё пишу фундамент и базовые механики для игры. То что находится сейчас в игре, просто моя песочница, где я тестирую и набираюсь опыта. Этот контент врядли войдёт в конечную версию.
 
 Скриншоты:
-![[screenshots/menuScreen1]]
-![[screenshots/menuScreen2]]
-![[screenshots/gameScreen1]]
-![[screenshots/gameScreen2]]
-![[screenshots/fightScreen]]
+![меню](./screenshots/menuScreen1.jpg)
+![меню](./screenshots/menuScreen2.jpg)
+![игра](./screenshots/gameScreen1.jpg)
+![игра](./screenshots/gameScreen2.jpg)
+![битва](./screenshots/fightScreen.jpg)
