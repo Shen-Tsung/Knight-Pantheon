@@ -179,7 +179,8 @@ function love.load()
 	
     scene:newScene("gr", gr)
 	scene:newScene("gr1", gr1)
-	]]
+	
+	
 	
 	file.sceneLoad("fightBg", "data/fight/fightBg")
 	file.sceneLoad("fight", "data/fight/fight")
@@ -196,6 +197,10 @@ function love.load()
 	file.audioLoad("text", "data/assets/sound/text.wav", "sound")
     
 	scene:push("fightBg", {"rudinn", "rudinn", "rudinn"})
+	]]
+	
+	file.sceneLoad("intro", "data/menu/intro")
+	scene:push("intro")
 end
 
 -- изменение размеров экрана (не используется)
