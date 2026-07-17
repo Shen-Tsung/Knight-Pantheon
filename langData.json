@@ -1,0 +1,108 @@
+{
+	"en": {
+		"menu": {
+		    "play": "Play",
+            "quit": "Quit",
+			"sure": "Are you sure?",
+			"yes": "Yes",
+			"no": "No",
+			"pause": "Pause",
+            "options": "Options",
+            "back": "Back",
+			"continue": "Continue",
+			"newGame": "New game",
+			"game": "Game",
+			"credits": "Credits",
+			"language": "Language",
+			"input": "Input mode",
+			"joystick": "Joystick",
+			"buttons": "Buttons",
+            "music": "Music",
+			"sound": "Sound",
+			"enableMusic": "Enable music",
+			"disableMusic": "Disable music",
+			"enableSound": "Enable sound",
+			"disableSound": "Disable sound",
+			"creditsText": "Author :   Rajab\nHelp and testing :   Ensgis\n\n\nThis is fan game,\nand should not be sold."
+		},
+		
+		"hud": {
+			"press": "Press",
+			"tap": "Tap"
+		},
+		
+		"grDoor": {
+			"idle": "You look at the door and remember \nwhat a shorty you are."
+		},
+        
+        "fireplace": {
+			"idle": "Definetly not 10 hours fireplace video"
+		},
+		
+		"snake": {
+			"idle": ["Speak.", "Where is your friends?", "...", "You're pretty good."],
+			"idle2": ["Spit it out.", "Where are the others?", "...", "I feel like I'm invisible."]
+		}	
+	},
+	
+	"ru": {
+		"menu": {
+		    "play": "Играть",
+            "quit": "Выход",
+			"sure": "Вы уверены?",
+			"yes": "Да",
+			"no": "Нет",
+			"pause" : "Пауза",
+            "options": "Настройки",
+            "back": "Назад",
+			"continue": "Продолжить",
+			"newGame": "Новая игра",
+			"game": "Игра",
+			"credits": "Авторы",
+			"language": "Язык",
+			"input": "Режим управления",
+			"joystick": "Джойстик",
+			"buttons": "Кнопки",
+            "music": "Музыка",
+			"sound": "Звук",
+			"enableMusic": "Включить музыку",
+			"disableMusic": "Выключить музыку",
+			"enableSound": "Включить звуки",
+			"disableSound": "Выключить звуки",
+		    "creditsText": "Автор игры :   Rajab\nПомощь и тестирование :   Ensgis\n\n\n\nЭта игра - фанатское произведение,\nи не является коммерческим продуктом."
+		},
+		
+		"hud": {
+			"press": "Жми",
+			"tap": "Жми"
+		},
+		
+		"grDoor": {
+			"idle": "Вы смотрите на дверь и понимаете \nкакой вы коротышка"
+		},
+		
+		"fireplace": {
+			"idle": "Это вовсе не экран с камином на 10 часов"
+		},
+		
+		"waterFountain": {
+			"idle": "Вас тянет бросить монету... Но карман пустой"
+		},
+		
+		"snake": {
+			"idle": ["Говори.", "Где твои дружки?", "...", "А ты хорош."],
+			"idle2": ["Выкладывай.", "Где остальные?", "...", "Чувствую себя невидимкой."]
+		},
+        
+        "fights": {
+            "tutorial": {
+                "name": "Кирпич",
+                "actions": ["Оценить", "Сравнить мечи", "Обнять", "Разыграть карту"],
+                "one": ["Кирпич, здоровье 80. Своё имя не оправдывает"],
+                "two": ["Вы сравниваете мечи...", "У вас больше"],
+                "three": ["Вы обнимаете Кирпича... Ему теперь не так одиноко"],
+                "four": ["Вы ставите туза... ", "Только вот Кирпич не знает как играть"]
+            }
+        }
+	}
+}
