@@ -179,9 +179,9 @@ function love.load()
 	
     scene:newScene("gr", gr)
 	scene:newScene("gr1", gr1)
+	]]
 	
-	
-	
+	-- Быстрая загрузка битвы
 	file.sceneLoad("fightBg", "data/fight/fightBg")
 	file.sceneLoad("fight", "data/fight/fight")
 	file.sceneLoad("fightAttack", "data/fight/fightAttack")
@@ -197,10 +197,12 @@ function love.load()
 	file.audioLoad("text", "data/assets/sound/text.wav", "sound")
     
 	scene:push("fightBg", {"rudinn", "rudinn", "rudinn"})
-	]]
 	
+	-- Быстрая загрузка с интро
+	--[[
 	file.sceneLoad("intro", "data/menu/intro")
 	scene:push("intro")
+	]]
 end
 
 -- изменение размеров экрана (не используется)

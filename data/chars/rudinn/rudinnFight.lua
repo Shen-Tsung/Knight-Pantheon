@@ -6,6 +6,7 @@ function rudinnFight.new(x, y)
         x = x or 50,
         y = y or 50,
         w = 0, h = 0,
+		hp = 100, maxHp = 100,
 		spared = false,
         sprite = nil,
         animation = "idle",

@@ -14,6 +14,7 @@ local index
 
 local Npc = {}
 local npc = {}
+local npcs
 local numOfNpc
 
 local box = {}
@@ -40,6 +41,7 @@ function fight:whenAdded(getNpc)
 	kris = nil
 	kris = Kris.new(WIDTH / 4, HEIGHT / 3)
 	
+	npcs = getNpc
 	Npc = {}
 	npc = {}
 	
@@ -63,7 +65,7 @@ function fight:whenAdded(getNpc)
 	
 	menu.hide = false
 	menu.actionsHide = false
-	menu.animSpeed = 8
+	menu.animSpeed = 12
 	
 	
 	menu.png = love.graphics.newImage("data/fight/fight.png")
@@ -331,7 +333,71 @@ function fight:touchpressed(id, x, y)
 		menu.spare.a = 0
 	end
 	end
-end	
+end
+
+function fight:touchmoved(id, x, y)
+	if PAUSE then return end
+	
+	if zone(back.x, back.y, back.w, back.h, x, y) then
+		touch[id] = "back"
+		back.c = {1, 1, 1, 0.5}
+	else
+		touch[id] = nil
+		back.c = {1, 1, 1, 1}
+	end	
+	
+	if not menu.actionsHide then
+	if zone(menu.fight.x, menu.fight.y, menu.fight.w, menu.fight.h, x, y) then
+		menu.fight.a = 1
+		touch[id] = "fight"
+		
+		menu.act.a = 0
+		menu.item.a = 0
+		menu.spare.a = 0
+		menu.defend.a = 0
+	elseif zone(menu.act.x, menu.act.y, menu.fight.w, menu.fight.h, x, y) then
+		menu.act.a = 1
+		touch[id] = "act"
+		
+		menu.fight.a = 0
+		menu.item.a = 0
+		menu.spare.a = 0
+		menu.defend.a = 0
+	elseif zone(menu.item.x, menu.item.y, menu.fight.w, menu.fight.h, x, y) then
+		menu.item.a = 1
+		touch[id] = "item"
+		
+		menu.fight.a = 0
+		menu.act.a = 0
+		menu.spare.a = 0
+		menu.defend.a = 0
+	elseif zone(menu.spare.x, menu.spare.y, menu.fight.w, menu.fight.h, x, y) then
+		menu.spare.a = 1
+		touch[id] = "spare"
+		
+		menu.fight.a = 0
+		menu.act.a = 0
+		menu.item.a = 0
+		menu.defend.a = 0
+	elseif zone(menu.defend.x, menu.defend.y, menu.fight.w, menu.fight.h, x, y) then
+		menu.defend.a = 1
+		touch[id] = "defend"
+		
+		menu.fight.a = 0
+		menu.act.a = 0
+		menu.item.a = 0
+		menu.spare.a = 0
+	else
+		touch[id] = nil
+		
+		menu.fight.a = 0
+		menu.act.a = 0
+		menu.item.a = 0
+		menu.spare.a = 0
+		menu.defend.a = 0
+	end
+	end
+end
 
 function fight:touchreleased(id, x, y)
 	if touch[id] == "back" then
@@ -362,66 +428,30 @@ function fight:touchreleased(id, x, y)
 			kris:anSelect("idle")
 		end
     elseif touch[id] == "fight" then
-		if menu.state == "preAttack" then
-			menu.fight.a = 0
-			menu.state = "attack"
-			menu.text = false
-		    kris:anSelect("attack")
-		    scene:push("fightAttack", "tutorial")
-		else
-		    menu.state = "preAttack"
-		end	
+		menu.fight.a = 0
+		menu.state = "attack"
+		menu.text = false
+		scene:push("fightAttack", "tutorial")
 	elseif touch[id] == "act" then
-		if menu.state == "preAct" then
-			menu.act.a = 0
-			menu.state = "act"
-			menu.text = false
-		    kris:anSelect("prepare")
-			scene:push("fightAct", "tutorial")
-		else
-		    menu.state = "preAct"
-		end	
+		menu.act.a = 0
+		menu.state = "act"
+		menu.text = false
+		kris:anSelect("prepare")
+		scene:push("fightAct", "tutorial")
 	elseif touch[id] == "item" then
-		if menu.state == "preItem" then
-			menu.item.a = 0
-			menu.state = "item"
-			menu.text = false
-		    kris:anSelect("item")
-		else
-			menu.fight.a = 0
-			menu.act.a = 0
-			menu.spare.a = 0
-			menu.defend.a = 0
-			
-		    menu.state = "preItem"
-		end	
+		menu.item.a = 0
+		menu.state = "item"
+		menu.text = false
+		kris:anSelect("item")
 	elseif touch[id] == "spare" then
-		if menu.state == "preSpare" then
-			menu.spare.a = 0
-			menu.state = "spare"
-			menu.text = false
-		    kris:anSelect("finish")
-		else
-			menu.fight.a = 0
-			menu.act.a = 0
-			menu.item.a = 0
-			menu.defend.a = 0	
-			
-		    menu.state = "preSpare"
-		end	
+		menu.spare.a = 0
+		menu.state = "spare"
+		menu.text = false
+		kris:anSelect("finish")
 	elseif touch[id] == "defend" then
-		if menu.state == "preDefend" then
-			menu.defend.a = 0
-			menu.state = "defend"
-		    kris:anSelect("shield")
-		else
-			menu.fight.a = 0
-			menu.act.a = 0
-			menu.item.a = 0
-			menu.spare.a = 0
-			
-		    menu.state = "preDefend"
-		end	
+		menu.defend.a = 0
+		menu.state = "defend"
+		kris:anSelect("shield")
 	end
 	
 	touch[id] = nil	
@@ -481,6 +511,10 @@ end
 function fight.getNpc()
 	return npc
 end
+
+function fight.getNpcs()
+	return npcs
+end	
 
 function fight.getMenu()
 	return menu

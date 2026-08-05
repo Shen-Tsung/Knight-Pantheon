@@ -4,7 +4,9 @@ local action = {}
 local act
 local isIdle
 
-local npc
+local npc = {}
+local Npc
+local state
 
 local timer
 
@@ -29,25 +31,103 @@ local function acting()
 	
 	menu.state = "neutral"
 	
-	oneMsg = #langData[currentLang]["fights"][npc][chooseAction] > 10
+	oneMsg = #langData[currentLang]["fights"][Npc][chooseAction] > 10
 	
 	text = tA.new(display, delay, box.x - box.w + 20, box.y + 10, voice)
 	
 	if oneMsg then
-	    text:setText(t("fights", npc, chooseAction))
+	    text:setText(t("fights", Npc, chooseAction))
 	else
-		text:setText(t("fights", npc, chooseAction, textIndex))
+		text:setText(t("fights", Npc, chooseAction, textIndex))
 	end
 	
-	kris:anSelect(t("fights", npc, "animation", chooseAction))
+	kris:anSelect(t("fights", Npc, "animation", chooseAction))
 end
 
-function fightAct:whenAdded(Npc)
+function fightAct:whenAdded(Npcs)
 	menu = fight.getMenu()
 	box = fight.getBox()
 	kris = fight.getKris()
+	npc.data = fight.getNpc()
+	npc.name = fight.getNpcs()
 	
-	npc = Npc
+	state = "target"
+	
+	Npc = Npcs
+	
+	-- Меню выбора
+	
+	npc.props = {
+		one = {
+			x = box.x1, y = box.y + 10, name = t("fights", Npc, "name")},
+		two = {
+			x = box.x2n3, y = box.y + 10, name = t("fights", Npc, "name")},
+		three = {
+			x = box.x3n3, y = box.y + 10, name = t("fights", Npc, "name")}
+	}
+	
+	npc.hpBar = {}
+	
+	if #npc.name == 1 then
+		npc.props.one.x = box.x1
+		npc.props.one.name = t("fights", Npc, "name")
+		npc.props.one.a = 1
+		
+		npc.hpBar.one = {}
+		npc.hpBar.one.x = npc.props.one.x
+		npc.hpBar.one.y = npc.props.one.y + 20
+		npc.hpBar.one.w = npc.data[1].hp
+		npc.hpBar.one.border = npc.data[1].maxHp
+	elseif #npc.name == 2 then
+		npc.props.one.x = box.x1
+		npc.props.one.name = t("fights", Npc, "name")
+		npc.props.one.a = 1
+		npc.props.two.x = box.x3n4
+		npc.props.two.name = t("fights", Npc, "name")
+		npc.props.two.a = 1
+		
+		npc.hpBar.one = {}
+		npc.hpBar.one.x = npc.props.one.x
+		npc.hpBar.one.y = npc.props.one.y + 20
+		npc.hpBar.one.w = npc.data[1].hp
+		npc.hpBar.one.border = npc.data[1].maxHp
+		
+		npc.hpBar.two = {}
+		npc.hpBar.two.x = npc.props.two.x
+		npc.hpBar.two.y = npc.props.two.y + 20
+		npc.hpBar.two.w = npc.data[2].hp
+		npc.hpBar.two.border = npc.data[2].maxHp
+	elseif #npc.name == 3 then
+		npc.props.one.x = box.x1
+		npc.props.one.name = t("fights", Npc, "name")
+		npc.props.one.a = 1
+		npc.props.two.x = box.x2n3
+		npc.props.two.name = t("fights", Npc, "name")
+		npc.props.two.a = 1
+		npc.props.three.x = box.x3n3
+		npc.props.three.name = t("fights", Npc, "name")
+		npc.props.three.a = 1
+		
+		npc.hpBar.one = {}
+		npc.hpBar.one.x = npc.props.one.x
+		npc.hpBar.one.y = npc.props.one.y + 20
+		npc.hpBar.one.w = npc.data[1].hp
+		npc.hpBar.one.border = npc.data[1].maxHp
+		
+		npc.hpBar.two = {}
+		npc.hpBar.two.x = npc.props.two.x
+		npc.hpBar.two.y = npc.props.two.y + 20
+		npc.hpBar.two.w = npc.data[2].hp
+		npc.hpBar.two.border = npc.data[2].maxHp
+		
+		npc.hpBar.three = {}
+		npc.hpBar.three.x = npc.props.three.x
+		npc.hpBar.three.y = npc.props.three.y + 20
+		npc.hpBar.three.w = npc.data[3].hp
+		npc.hpBar.three.border = npc.data[3].maxHp
+	end
+	
+	-- Действия
 	
 	act = false
 	
@@ -82,42 +162,116 @@ end
 function fightAct:update(dt)
 	if PAUSE then return end
 	
-	action.one.x = box.x1
-	action.two.x = box.x2n4
-	action.three.x = box.x3n4
-	action.four.x = box.x4n4
-	
-	if act then
-		text:update(dt)
-	end
+	if state == "act" then
+		action.one.x = box.x1
+		action.two.x = box.x2n4
+		action.three.x = box.x3n4
+		action.four.x = box.x4n4
+		
+		if act then
+			text:update(dt)
+		end
+	elseif state == "target" then
+		if #npc.name == 1 then
+			npc.props.one.x = box.x1
+			npc.hpBar.one.x = npc.props.one.x
+		elseif #npc.name == 2 then
+			npc.props.one.x = box.x1
+			npc.props.two.x = box.x3n4
+			npc.hpBar.one.x = npc.props.one.x
+			npc.hpBar.two.x = npc.props.two.x
+		elseif #npc.name == 3 then
+			npc.props.one.x = box.x1
+			npc.props.two.x = box.x2n3
+			npc.props.three.x = box.x3n3
+			npc.hpBar.one.x = npc.props.one.x
+			npc.hpBar.two.x = npc.props.two.x
+			npc.hpBar.three.x = npc.props.three.x
+		end
+	end	
 end
 
 function fightAct:drawUI()
 	love.graphics.setScissor(box.x - box.w, box.y, box.w, box.h)
 	
-	if not act then
-		love.graphics.setColor(1, 1, 1, 0.5)
-		love.graphics.line(box.x2n4 - 30, box.y, box.x2n4 - 30, box.y + box.h)
-		love.graphics.line(box.x3n4 - 30, box.y, box.x3n4 - 30, box.y + box.h)
-		love.graphics.line(box.x4n4 - 30, box.y, box.x4n4 - 30, box.y + box.h)
+	if state == "act" then
+		if not act then
+			love.graphics.setColor(1, 1, 1, 0.5)
+			love.graphics.line(box.x2n4 - 30, box.y, box.x2n4 - 30, box.y + box.h)
+			love.graphics.line(box.x3n4 - 30, box.y, box.x3n4 - 30, box.y + box.h)
+			love.graphics.line(box.x4n4 - 30, box.y, box.x4n4 - 30, box.y + box.h)
 		
-		love.graphics.setColor(1, 1, 1, action.one.a)
-		love.graphics.print("*", action.one.x - 20, box.y + 10)
-		love.graphics.printf(t("fights", npc, "actions", 1), action.one.x, box.y + 10, 140, "left")
-		love.graphics.setColor(1, 1, 1, action.two.a)
-		love.graphics.print("*", action.two.x - 20, box.y + 10)
-		love.graphics.printf(t("fights", npc, "actions", 2), action.two.x, box.y + 10, 140, "left")
-		love.graphics.setColor(1, 1, 1, action.three.a)
-		love.graphics.print("*", action.three.x - 20, box.y + 10)
-		love.graphics.printf(t("fights", npc, "actions", 3), action.three.x, box.y + 10, 140, "left")
-		love.graphics.setColor(1, 1, 1, action.four.a)
-		love.graphics.print("*", action.four.x - 20, box.y + 10)
-		love.graphics.printf(t("fights", npc, "actions", 4), action.four.x, box.y + 10, 140, "left")
-	else
+			love.graphics.setColor(1, 1, 1, action.one.a)
+			love.graphics.print("*", action.one.x - 20, box.y + 10)
+			love.graphics.printf(t("fights", "tutorial", "actions", 1), action.one.x, box.y + 10, 140, "left")
+			love.graphics.setColor(1, 1, 1, action.two.a)
+			love.graphics.print("*", action.two.x - 20, box.y + 10)
+			love.graphics.printf(t("fights", Npc, "actions", 2), action.two.x, box.y + 10, 140, "left")
+			love.graphics.setColor(1, 1, 1, action.three.a)
+			love.graphics.print("*", action.three.x - 20, box.y + 10)
+			love.graphics.printf(t("fights", Npc, "actions", 3), action.three.x, box.y + 10, 140, "left")
+			love.graphics.setColor(1, 1, 1, action.four.a)
+			love.graphics.print("*", action.four.x - 20, box.y + 10)
+			love.graphics.printf(t("fights", Npc, "actions", 4), action.four.x, box.y + 10, 140, "left")
+		else
+			love.graphics.setColor(1, 1, 1, 1)
+			love.graphics.print("*", action.one.x - 20, box.y + 10)
+			text:draw()
+		end
+	elseif state == "target" then
 		love.graphics.setColor(1, 1, 1, 1)
-		love.graphics.print("*", action.one.x - 20, box.y + 10)
-		text:draw()
-	end
+		
+		if #npc.name == 1 then
+			love.graphics.setColor(1, 1, 1, npc.props.one.a)
+			love.graphics.printf(npc.props.one.name, npc.props.one.x, npc.props.one.y, 140, "left")
+			
+			love.graphics.setColor(1, 0, 0, 1)
+			love.graphics.rectangle("fill", npc.hpBar.one.x, npc.hpBar.one.y, npc.hpBar.one.w, 20)
+			love.graphics.setColor(1, 1, 1)
+			love.graphics.rectangle("line", npc.hpBar.one.x, npc.hpBar.one.y, npc.hpBar.one.border, 20)
+		elseif #npc.name == 2 then
+			love.graphics.setColor(1, 1, 1, npc.props.one.a)
+			love.graphics.printf(npc.props.one.name, npc.props.one.x, npc.props.one.y, 140, "left")
+			love.graphics.setColor(1, 1, 1, npc.props.two.a)
+			love.graphics.printf(npc.props.two.name, npc.props.two.x, npc.props.two.y, 140, "left")
+			
+			love.graphics.setColor(1, 1, 1, 0.5)
+			love.graphics.line(box.x3n4 - 30, box.y, box.x3n4 - 30, box.y + box.h)
+			
+			love.graphics.setColor(1, 0, 0, 1)
+			love.graphics.rectangle("fill", npc.hpBar.one.x, npc.hpBar.one.y, npc.hpBar.one.w, 20)
+			love.graphics.setColor(1, 1, 1)
+			love.graphics.rectangle("line", npc.hpBar.one.x, npc.hpBar.one.y, npc.hpBar.one.border, 20)
+			love.graphics.setColor(1, 0, 0, 1)
+			love.graphics.rectangle("fill", npc.hpBar.two.x, npc.hpBar.two.y, npc.hpBar.two.w, 20)
+			love.graphics.setColor(1, 1, 1)
+			love.graphics.rectangle("line", npc.hpBar.two.x, npc.hpBar.two.y, npc.hpBar.two.border, 20)
+		elseif #npc.name == 3 then
+			love.graphics.setColor(1, 1, 1, npc.props.one.a)
+			love.graphics.printf(npc.props.one.name, npc.props.one.x, npc.props.one.y, 140, "left")
+			love.graphics.setColor(1, 1, 1, npc.props.two.a)
+			love.graphics.printf(npc.props.two.name, npc.props.two.x, npc.props.two.y, 140, "left")
+			love.graphics.setColor(1, 1, 1, npc.props.three.a)
+			love.graphics.printf(npc.props.three.name, npc.props.three.x, npc.props.three.y, 140, "left")
+			
+			love.graphics.setColor(1, 1, 1, 0.5)
+			love.graphics.line(box.x2n3 - 30, box.y, box.x2n3 - 30, box.y + box.h)
+			love.graphics.line(box.x3n3 - 30, box.y, box.x3n3 - 30, box.y + box.h)
+			
+			love.graphics.setColor(1, 0, 0, 1)
+			love.graphics.rectangle("fill", npc.hpBar.one.x, npc.hpBar.one.y, npc.hpBar.one.w, 20)
+			love.graphics.setColor(1, 1, 1)
+			love.graphics.rectangle("line", npc.hpBar.one.x, npc.hpBar.one.y, npc.hpBar.one.border, 20)
+			love.graphics.setColor(1, 0, 0, 1)
+			love.graphics.rectangle("fill", npc.hpBar.two.x, npc.hpBar.two.y, npc.hpBar.two.w, 20)
+			love.graphics.setColor(1, 1, 1)
+			love.graphics.rectangle("line", npc.hpBar.two.x, npc.hpBar.two.y, npc.hpBar.two.border, 20)
+			love.graphics.setColor(1, 0, 0, 1)
+			love.graphics.rectangle("fill", npc.hpBar.three.x, npc.hpBar.three.y, npc.hpBar.three.w, 20)
+			love.graphics.setColor(1, 1, 1)
+			love.graphics.rectangle("line", npc.hpBar.three.x, npc.hpBar.three.y, npc.hpBar.three.border, 20)
+		end
+	end	
 	
 	love.graphics.setScissor()
 end
@@ -125,19 +279,113 @@ end
 function fightAct:touchpressed(id, x, y)
 	if PAUSE or act then return end
 	
-	if zone(action.one.x - 30, box.y, box.w / 4, box.h, x, y) then
-		touch[id] = "one"
-		action.one.a = 0.5
-	elseif zone(action.two.x - 30, box.y, box.w / 4, box.h, x, y) then
+	if state == "act" then
+		if zone(action.one.x - 30, box.y, box.w / 4, box.h, x, y) then
+			touch[id] = "one"
+			action.one.a = 0.5
+		elseif zone(action.two.x - 30, box.y, box.w / 4, box.h, x, y) then
 		touch[id] = "two"
 		action.two.a = 0.5
-	elseif zone(action.three.x - 30, box.y, box.w / 4, box.h, x, y) then
-		touch[id] = "three"
-		action.three.a = 0.5
-	elseif zone(action.four.x - 30, box.y, box.w / 4, box.h, x, y) then
-		touch[id] = "four"
-		action.four.a = 0.5
-	end			
+		elseif zone(action.three.x - 30, box.y, box.w / 4, box.h, x, y) then
+			touch[id] = "three"
+			action.three.a = 0.5
+		elseif zone(action.four.x - 30, box.y, box.w / 4, box.h, x, y) then
+			touch[id] = "four"
+			action.four.a = 0.5
+		end
+	elseif state == "target" then
+		if #npc.name == 1 then
+			if zone(box.x, box.y, box.w, box.h, x, y) then
+				touch[id] = 2
+				npc.props.one.a = 0.5
+			end	
+		elseif #npc.name == 2 then
+			if zone(npc.props.one.x - 30, box.y, box.w / 2, box.h, x, y) then
+				touch[id] = 1
+				npc.props.one.a = 0.5
+			elseif zone(npc.props.two.x - 30, box.y, box.w / 2, box.h, x, y) then
+				touch[id] = 2
+				npc.props.two.a = 0.5
+			end	
+		elseif #npc.name == 3 then
+			if zone(npc.props.one.x - 30, box.y, box.w / 3, box.h, x, y) then
+				touch[id] = 1
+				npc.props.one.a = 0.5
+			elseif zone(npc.props.two.x - 30, box.y, box.w / 3, box.h, x, y) then
+				touch[id] = 2
+				npc.props.two.a = 0.5
+			elseif zone(npc.props.three.x - 30, box.y, box.w / 3, box.h, x, y) then
+				touch[id] = 3
+				npc.props.three.a = 0.5
+			end
+		end
+	end		
+end	
+
+function fightAct:touchmoved(id, x, y)
+	if PAUSE then return end
+	
+	if state == "act" then
+		if zone(action.one.x - 30, box.y, box.w / 4, box.h, x, y) then
+			touch[id] = "one"
+			action.one.a = 0.5
+		elseif zone(action.two.x - 30, box.y, box.w / 4, box.h, x, y) then
+		touch[id] = "two"
+		action.two.a = 0.5
+		elseif zone(action.three.x - 30, box.y, box.w / 4, box.h, x, y) then
+			touch[id] = "three"
+			action.three.a = 0.5
+		elseif zone(action.four.x - 30, box.y, box.w / 4, box.h, x, y) then
+			touch[id] = "four"
+			action.four.a = 0.5
+		end
+	elseif state == "target" then
+		if #npc.name == 1 then
+			if zone(box.x, box.y, box.w, box.h, x, y) then
+				touch[id] = 1
+				npc.props.one.a = 0.5
+			else
+				touch[id] = nil
+				npc.props.one.a = 1
+			end	
+		elseif #npc.name == 2 then
+			if zone(npc.props.one.x - 30, box.y, box.w / 2, box.h, x, y) then
+				touch[id] = 1
+				npc.props.one.a = 0.5
+				npc.props.two.a = 1
+			elseif zone(npc.props.two.x - 30, box.y, box.w / 2, box.h, x, y) then
+				touch[id] = 2
+				npc.props.two.a = 0.5
+				npc.props.one.a = 1
+			else
+				touch[id] = nil
+				npc.props.one.a = 1
+				npc.props.two.a = 1
+			end	
+		elseif #npc.name == 3 then
+			if zone(npc.props.one.x - 30, box.y, box.w / 3, box.h, x, y) then
+				touch[id] = 1
+				npc.props.one.a = 0.5
+				npc.props.two.a = 1
+				npc.props.three.a = 1
+			elseif zone(npc.props.two.x - 30, box.y, box.w / 3, box.h, x, y) then
+				touch[id] = 2
+				npc.props.two.a = 0.5
+				npc.props.one.a = 1
+				npc.props.three.a = 1
+			elseif zone(npc.props.three.x - 30, box.y, box.w / 3, box.h, x, y) then
+				touch[id] = 3
+				npc.props.three.a = 0.5
+				npc.props.one.a = 1
+				npc.props.two.a = 1
+			else
+				touch[id] = nil
+				npc.props.one.a = 1
+				npc.props.two.a = 1
+				npc.props.three.a = 1
+			end	
+		end
+	end
 end	
 
 function fightAct:touchreleased(id, x, y)
@@ -155,10 +403,10 @@ function fightAct:touchreleased(id, x, y)
 				scene:pop("fightAct")
 				menu.state = "neutral"
 		else
-			text:setText(t("fights", npc, chooseAction, textIndex))
+			text:setText(t("fights", Npc, chooseAction, textIndex))
 		end
 	
-		if textIndex > #langData[currentLang]["fights"][npc][chooseAction] then
+		if textIndex > #langData[currentLang]["fights"][Npc][chooseAction] then
 			scene:pop("fightAct")
 			menu.actionsHide = false
 			menu.text = true
@@ -169,22 +417,76 @@ function fightAct:touchreleased(id, x, y)
 		end
 	end
 	
-	if touch[id] == "one" then
-		action.one.a = 0.5
-		chooseAction = "one"
-		acting()
-	elseif touch[id] == "two" then
-		action.two.a = 0.5
-		chooseAction = "two"
-		acting()
-	elseif touch[id] == "three" then
-		action.three.a = 0.5
-		chooseAction = "three"
-		acting()
-	elseif touch[id] == "four" then
-		action.four.a = 0.5
-		chooseAction = "four"
-		acting()
+	if state == "act" then
+		if touch[id] == "one" then
+			action.one.a = 0.5
+			chooseAction = "one"
+			acting()
+		elseif touch[id] == "two" then
+			action.two.a = 0.5
+			chooseAction = "two"
+			acting()
+		elseif touch[id] == "three" then
+			action.three.a = 0.5
+			chooseAction = "three"
+			acting()
+		elseif touch[id] == "four" then
+			action.four.a = 0.5
+			chooseAction = "four"
+			acting()
+		end
+	elseif state == "target" then
+		if #npc.name == 1 then
+			if zone(box.x, box.y, box.w, box.h, x, y) then
+				touch[id] = 1
+				npc.props.one.a = 0.5
+				state = "act"
+			else
+				touch[id] = nil
+				npc.props.one.a = 1
+			end	
+		elseif #npc.name == 2 then
+			if zone(npc.props.one.x - 30, box.y, box.w / 2, box.h, x, y) then
+				touch[id] = 1
+				npc.props.one.a = 0.5
+				npc.props.two.a = 1
+				state = "act"
+			elseif zone(npc.props.two.x - 30, box.y, box.w / 2, box.h, x, y) then
+				touch[id] = 2
+				npc.props.two.a = 0.5
+				npc.props.one.a = 1
+				state = "act"
+			else
+				touch[id] = nil
+				npc.props.one.a = 1
+				npc.props.two.a = 1
+			end	
+		elseif #npc.name == 3 then
+			if zone(npc.props.one.x - 30, box.y, box.w / 3, box.h, x, y) then
+				touch[id] = 1
+				npc.props.one.a = 0.5
+				npc.props.two.a = 1
+				npc.props.three.a = 1
+				state = "act"
+			elseif zone(npc.props.two.x - 30, box.y, box.w / 3, box.h, x, y) then
+				touch[id] = 2
+				npc.props.two.a = 0.5
+				npc.props.one.a = 1
+				npc.props.three.a = 1
+				state = "act"
+			elseif zone(npc.props.three.x - 30, box.y, box.w / 3, box.h, x, y) then
+				touch[id] = 3
+				npc.props.three.a = 0.5
+				npc.props.one.a = 1
+				npc.props.two.a = 1
+				state = "act"
+			else
+				touch[id] = nil
+				npc.props.one.a = 1
+				npc.props.two.a = 1
+				npc.props.three.a = 1
+			end	
+		end
 	end
 	
 	touch[id] = nil		
